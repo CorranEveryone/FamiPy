@@ -1,2 +1,7 @@
+# User Data
+roms
+
+# Program Files
 .vscode
 .venv
+__pycache__

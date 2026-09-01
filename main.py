@@ -8,7 +8,7 @@ romfilepath = "./roms/Super Mario Bros. (World).nes" # Only .nes files are suppo
 
 ##### DEFINE ALL VARIABLES HERE #####
 # Power Up State
-ram = bytearray(b'\x01'*2048) # 2kb ram
+ram = bytearray(b'\x00'*2048) # 2kb ram
 ## CPU Registers
 cpu_a = bytearray(b'\x00')
 cpu_x = bytearray(b'\x00')

@@ -32,26 +32,26 @@ def cpumap(address:bytearray) -> bytearray: #address:16bit
     if addresspage == bytearray(b'\x00') or addresspage == bytearray(b'\x08') or addresspage == bytearray(b'\x10') or addresspage == bytearray(b'\x18'): # RAM Page 0
         return ram[addressbyte[0]:addressbyte[0]+1]
     elif addresspage == bytearray(b'\x01') or addresspage == bytearray(b'\x09') or addresspage == bytearray(b'\x11') or addresspage == bytearray(b'\x19'): # RAM Page 1
-        return ram[addressbyte[0+(256*1)]:addressbyte[0+(256*1)]+1]
+        return ram[addressbyte[0]+(256*1):addressbyte[0]+(256*1)+1]
     elif addresspage == bytearray(b'\x02') or addresspage == bytearray(b'\x0A') or addresspage == bytearray(b'\x12') or addresspage == bytearray(b'\x1A'): # RAM Page 2
-        return ram[addressbyte[0+(256*2)]:addressbyte[0+(256*2)]+1]
+        return ram[addressbyte[0]+(256*2):addressbyte[0]+(256*2)+1]
     elif addresspage == bytearray(b'\x03') or addresspage == bytearray(b'\x0B') or addresspage == bytearray(b'\x13') or addresspage == bytearray(b'\x1B'): # RAM Page 3
-        return ram[addressbyte[0+(256*3)]:addressbyte[0+(256*3)]+1]
+        return ram[addressbyte[0]+(256*3):addressbyte[0]+(256*3)+1]
     elif addresspage == bytearray(b'\x04') or addresspage == bytearray(b'\x0C') or addresspage == bytearray(b'\x14') or addresspage == bytearray(b'\x1C'): # RAM Page 4
-        return ram[addressbyte[0+(256*4)]:addressbyte[0+(256*4)]+1]
+        return ram[addressbyte[0]+(256*4):addressbyte[0]+(256*4)+1]
     elif addresspage == bytearray(b'\x05') or addresspage == bytearray(b'\x0D') or addresspage == bytearray(b'\x15') or addresspage == bytearray(b'\x1D'): # RAM Page 5
-        return ram[addressbyte[0+(256*5)]:addressbyte[0+(256*5)]+1]
+        return ram[addressbyte[0]+(256*5):addressbyte[0]+(256*5)+1]
     elif addresspage == bytearray(b'\x06') or addresspage == bytearray(b'\x0E') or addresspage == bytearray(b'\x16') or addresspage == bytearray(b'\x1E'): # RAM Page 6
-        return ram[addressbyte[0+(256*6)]:addressbyte[0+(256*6)]+1]
+        return ram[addressbyte[0]+(256*6):addressbyte[0]+(256*6)+1]
     elif addresspage == bytearray(b'\x07') or addresspage == bytearray(b'\x0F') or addresspage == bytearray(b'\x17') or addresspage == bytearray(b'\x1F'): # RAM Page 7
-        return ram[addressbyte[0+(256*7)]:addressbyte[0+(256*7)]+1]
+        return ram[addressbyte[0]+(256*7):addressbyte[0]+(256*7)+1]
     # MISSING_PPU_STUFF
     # MISSING_APU_STUFF
     elif addresspage[0] >= 128:
         return prgrom[addressbyte[0]+(addresspage[0]-128)*256:(addressbyte[0]+(addresspage[0]-128)*256)+1]
     else:
         print(f"[ERROR] {address} is not a defined CPU Memory Address")
-        return bytearray('\x00')
+        return bytearray(b'\x00')
 
 def writecpumap(address:bytearray, value:bytearray) -> bool:
     addresspage = address[0:1]
@@ -61,19 +61,19 @@ def writecpumap(address:bytearray, value:bytearray) -> bool:
     if addresspage == bytearray(b'\x00') or addresspage == bytearray(b'\x08') or addresspage == bytearray(b'\x10') or addresspage == bytearray(b'\x18'): # RAM Page 0
         ram[addressbyte[0]:addressbyte[0]+1] = value
     elif addresspage == bytearray(b'\x01') or addresspage == bytearray(b'\x09') or addresspage == bytearray(b'\x11') or addresspage == bytearray(b'\x19'): # RAM Page 1
-        ram[addressbyte[0+(256*1)]:addressbyte[0+(256*1)]+1] = value
+        ram[addressbyte[0]+(256*1):addressbyte[0]+(256*1)+1] = value
     elif addresspage == bytearray(b'\x02') or addresspage == bytearray(b'\x0A') or addresspage == bytearray(b'\x12') or addresspage == bytearray(b'\x1A'): # RAM Page 2
-        ram[addressbyte[0+(256*2)]:addressbyte[0+(256*2)]+1] = value
+        ram[addressbyte[0]+(256*2):addressbyte[0]+(256*2)+1] = value
     elif addresspage == bytearray(b'\x03') or addresspage == bytearray(b'\x0B') or addresspage == bytearray(b'\x13') or addresspage == bytearray(b'\x1B'): # RAM Page 3
-        ram[addressbyte[0+(256*3)]:addressbyte[0+(256*3)]+1] = value
+        ram[addressbyte[0]+(256*3):addressbyte[0]+(256*3)+1] = value
     elif addresspage == bytearray(b'\x04') or addresspage == bytearray(b'\x0C') or addresspage == bytearray(b'\x14') or addresspage == bytearray(b'\x1C'): # RAM Page 4
-        ram[addressbyte[0+(256*4)]:addressbyte[0+(256*4)]+1] = value
+        ram[addressbyte[0]+(256*4):addressbyte[0]+(256*4)+1] = value
     elif addresspage == bytearray(b'\x05') or addresspage == bytearray(b'\x0D') or addresspage == bytearray(b'\x15') or addresspage == bytearray(b'\x1D'): # RAM Page 5
-        ram[addressbyte[0+(256*5)]:addressbyte[0+(256*5)]+1] = value
+        ram[addressbyte[0]+(256*5):addressbyte[0]+(256*5)+1] = value
     elif addresspage == bytearray(b'\x06') or addresspage == bytearray(b'\x0E') or addresspage == bytearray(b'\x16') or addresspage == bytearray(b'\x1E'): # RAM Page 6
-        ram[addressbyte[0+(256*6)]:addressbyte[0+(256*6)]+1] = value
+        ram[addressbyte[0]+(256*6):addressbyte[0]+(256*6)+1] = value
     elif addresspage == bytearray(b'\x07') or addresspage == bytearray(b'\x0F') or addresspage == bytearray(b'\x17') or addresspage == bytearray(b'\x1F'): # RAM Page 7
-        ram[addressbyte[0+(256*7)]:addressbyte[0+(256*7)]+1] = value
+        ram[addressbyte[0]+(256*7):addressbyte[0]+(256*7)+1] = value
     # MISSING_PPU_STUFF
     # MISSING_APU_STUFF
     else:
@@ -119,11 +119,28 @@ def intToBin(givenint:bytearray) -> list:
         usableint -= 1
     return returnvalue
 
+def signedInt(givenint:bytearray) -> int:
+    usableint = givenint[0]
+    if usableint >= 128:
+        usableint -= 128
+        usableint *= -1
+    return usableint
+
 def cpu(address:bytearray) -> bool:
     global cpu_a, cpu_x, cpu_y, cpu_pc, cpu_returnpc, cpu_s, cpu_c, cpu_z, cpu_i, cpu_d, cpu_v, cpu_n, cpu_cycles
     returncode = True
     opcode = cpumap(address)
-    if opcode == bytearray(b'\x78'): #SEI - Set Interrupt Disable
+    if opcode == bytearray(b'\x10'): #BPL - Branch if Plus
+        if cpu_n == bytearray(b'\x00'): #FIXFIX
+            cpu_returnpc = addTo16BitInt(address, signedInt(addTo16BitInt(address, 1))+2)
+        else:
+            cpu_returnpc = addTo16BitInt(address, 2)
+        cpu_cycles = 2
+        if cpu_n == bytearray(b'\x00'):
+            cpu_cycles += 1
+        if address[0:1] != addTo16BitInt(address, signedInt(addTo16BitInt(address, 1))+2):
+            cpu_cycles += 1
+    elif opcode == bytearray(b'\x78'): #SEI - Set Interrupt Disable
         cpu_i = bytearray(b'\x01') # PATCH_NEEDED Eventually delay by an instruction
         cpu_returnpc = addTo16BitInt(address, 1)
         cpu_cycles = 2
@@ -221,6 +238,30 @@ def cpu(address:bytearray) -> bool:
             cpu_n = bytearray(b'\x00')
         cpu_returnpc = addTo16BitInt(address, 1)
         cpu_cycles = 2
+    elif opcode == bytearray(b'\xAD'): #LDA - Load A (Absolute)
+        i = cpumap(addTo16BitInt(address, 2))
+        i.extend(cpumap(addTo16BitInt(address, 1)))
+        cpu_a = cpumap(i)
+        if cpu_a == bytearray(b'\x00'):
+            cpu_z = bytearray(b'\x01')
+        else:
+            cpu_z = bytearray(b'\x00')
+        if intToBin(cpu_a)[7] == 1:
+            cpu_n = bytearray(b'\x01')
+        else:
+            cpu_n = bytearray(b'\x00')
+        cpu_returnpc = addTo16BitInt(address, 3)
+        cpu_cycles = 4
+    elif opcode == bytearray(b'\xB0'): #BCS - Branch if Carry Set
+        if cpu_c == bytearray(b'\x01'):
+            cpu_returnpc = addTo16BitInt(address, signedInt(addTo16BitInt(address, 1))+2)
+        else:
+            cpu_returnpc = addTo16BitInt(address, 2)
+        cpu_cycles = 2
+        if cpu_c == bytearray(b'\x01'):
+            cpu_cycles += 1
+        if address[0:1] != addTo16BitInt(address, signedInt(addTo16BitInt(address, 1))+2):
+            cpu_cycles += 1
     elif opcode == bytearray(b'\xBA'): #TSX - Transfer Stack Pointer to X
         cpu_x = cpu_s
         if cpu_x == bytearray(b'\x00'):
@@ -233,12 +274,67 @@ def cpu(address:bytearray) -> bool:
             cpu_n = bytearray(b'\x00')
         cpu_returnpc = addTo16BitInt(address, 1)
         cpu_cycles = 2
+    elif opcode == bytearray(b'\xBD'): #LDA - Load A (Absolute, X)
+        i = cpumap(addTo16BitInt(address, 2))
+        i.extend(cpumap(addTo16BitInt(address, 1)))
+        cpu_a = cpumap(addTo16BitInt(i, cpu_x[0]))
+        if cpu_a == bytearray(b'\x00'):
+            cpu_z = bytearray(b'\x01')
+        else:
+            cpu_z = bytearray(b'\x00')
+        if intToBin(cpu_a)[7] == 1:
+            cpu_n = bytearray(b'\x01')
+        else:
+            cpu_n = bytearray(b'\x00')
+        cpu_returnpc = addTo16BitInt(address, 3)
+        cpu_cycles = 4
+        if i[0:1] != addTo16BitInt(i, cpu_x[0])[0:1]: # Account for "oops" cycle
+            cpu_cycles += 1
+    elif opcode == bytearray(b'\xC9'): #CMP - Compare A (#Immediate)
+        if cpu_a[0] >= cpumap(addTo16BitInt(address, 1))[0]:
+            cpu_c = bytearray(b'\x01')
+        else:
+            cpu_c = bytearray(b'\x00')
+        if cpu_a == cpumap(addTo16BitInt(address, 1)):
+            cpu_z = bytearray(b'\x01')
+        else:
+            cpu_z = bytearray(b'\x00')
+        if cpu_a[0] - cpumap(addTo16BitInt(address, 1))[0] < 0:
+            cpu_n = bytearray(b'\x01')
+        else:
+            cpu_n = bytearray(b'\x00')
+        cpu_returnpc = addTo16BitInt(address, 2)
+        cpu_cycles = 2
+    elif opcode == bytearray(b'\xCA'): #DEX - Decrement X
+        cpu_x[0] -= 1
+        while cpu_x[0] < 0:
+            cpu_x[0] += 256
+        if cpu_x == bytearray(b'\x00'):
+            cpu_z = bytearray(b'\x01')
+        else:
+            cpu_z = bytearray(b'\x00')
+        if intToBin(cpu_x)[7] == 1:
+            cpu_n = bytearray(b'\x01')
+        else:
+            cpu_n = bytearray(b'\x00')
+        cpu_returnpc = addTo16BitInt(address, 1)
+        cpu_cycles = 2
+    elif opcode == bytearray(b'\xD0'): #BPL - Branch if Plus
+        if cpu_z == bytearray(b'\x00'): #FIXFIX
+            cpu_returnpc = addTo16BitInt(address, signedInt(addTo16BitInt(address, 1))+2)
+        else:
+            cpu_returnpc = addTo16BitInt(address, 2)
+        cpu_cycles = 2
+        if cpu_z == bytearray(b'\x00'):
+            cpu_cycles += 1
+        if address[0:1] != addTo16BitInt(address, signedInt(addTo16BitInt(address, 1))+2):
+            cpu_cycles += 1
     elif opcode == bytearray(b'\xD8'): #CLD - Clear Decimal
         cpu_d = bytearray(b'\x00')
         cpu_returnpc = addTo16BitInt(address, 1)
         cpu_cycles = 2
     else:
-        print(f"Unknown OPCODE: {opcode}")
+        print(f"Unknown OPCODE: {opcode} at {address}")
         returncode = False
     return returncode
 

@@ -131,7 +131,7 @@ def cpu(address:bytearray) -> bool:
     returncode = True
     opcode = cpumap(address)
     if opcode == bytearray(b'\x10'): #BPL - Branch if Plus
-        if cpu_n == bytearray(b'\x00'): #FIXFIX
+        if cpu_n == bytearray(b'\x00'):
             cpu_returnpc = addTo16BitInt(address, signedInt(addTo16BitInt(address, 1))+2)
         else:
             cpu_returnpc = addTo16BitInt(address, 2)

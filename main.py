@@ -46,6 +46,8 @@ def cpumap(address:bytearray) -> bytearray: #address:16bit
     elif addresspage == bytearray(b'\x07') or addresspage == bytearray(b'\x0F') or addresspage == bytearray(b'\x17') or addresspage == bytearray(b'\x1F'): # RAM Page 7
         return ram[addressbyte[0]+(256*7):addressbyte[0]+(256*7)+1]
     # MISSING_PPU_STUFF
+    elif address == bytearray(b'\x20\x02'):# DEBUG CODE
+        return bytearray(b'\xFF')# DEBUG CODE
     # MISSING_APU_STUFF
     elif addresspage[0] >= 128:
         return prgrom[addressbyte[0]+(addresspage[0]-128)*256:(addressbyte[0]+(addresspage[0]-128)*256)+1]
@@ -268,9 +270,10 @@ def cpu(address:bytearray) -> bool:
         cpu_returnpc = addTo16BitInt(address, 2)
         cpu_cycles = 2
     elif opcode == bytearray(b'\xCA'): #DEX - Decrement X
-        cpu_x[0] -= 1
-        while cpu_x[0] < 0:
-            cpu_x[0] += 256
+        try:
+            cpu_x[0] -= 1
+        except ValueError: # Value goes below 00, catch and wrap to FF
+            cpu_x[0] = 255
         updateZeroFlag(cpu_x)
         updateNegativeFlag(cpu_x)
         cpu_returnpc = addTo16BitInt(address, 1)
@@ -278,8 +281,6 @@ def cpu(address:bytearray) -> bool:
     elif opcode == bytearray(b'\xD0'): #BNE - Branch if Not Equal
         if cpu_z == bytearray(b'\x00'):
             cpu_returnpc = addTo16BitInt(address, signedInt(cpumap(addTo16BitInt(address, 1)))+2)
-            print(cpu_returnpc)
-            print(signedInt(addTo16BitInt(address, 1))+2)
         else:
             cpu_returnpc = addTo16BitInt(address, 2)
         cpu_cycles = 2

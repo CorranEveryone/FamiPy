@@ -146,6 +146,18 @@ def cpu(address:bytearray) -> bool:
         i.extend(cpumap(addTo16BitInt(address, 1)))
         cpu_returnpc = i
         cpu_cycles = 6
+    elif opcode == bytearray(b'\x60'): #RTS - Return from Subroutine
+        cpu_s = bytearray([cpu_s[0]+1])
+        i = bytearray(b'\x01')
+        i.extend(cpu_s)
+        ii = cpumap(i)
+        cpu_s = bytearray([cpu_s[0]+1])
+        i = bytearray(b'\x01')
+        i.extend(cpu_s)
+        ii.extend(cpumap(i))
+        print(addTo16BitInt(ii, 1))
+        cpu_returnpc = addTo16BitInt(ii, 1)
+        cpu_cycles = 6
     elif opcode == bytearray(b'\x78'): #SEI - Set Interrupt Disable
         cpu_i = bytearray(b'\x01') # PATCH_NEEDED Eventually delay by an instruction
         cpu_returnpc = addTo16BitInt(address, 1)
@@ -168,6 +180,16 @@ def cpu(address:bytearray) -> bool:
         writecpumap(i, cpu_x)
         cpu_returnpc = addTo16BitInt(address, 2)
         cpu_cycles = 3
+    elif opcode == bytearray(b'\x88'): #DEY - Decrement Y
+        y = cpu_y[0]
+        y -= 1
+        while y < 0:
+            y += 256
+        cpu_y[0] = y
+        updateZeroFlag(cpu_y)
+        updateNegativeFlag(cpu_y)
+        cpu_returnpc = addTo16BitInt(address, 1)
+        cpu_cycles = 2
     elif opcode == bytearray(b'\x8A'): #TXA - Transfer X to A
         cpu_a = cpu_x
         updateZeroFlag(cpu_a)
@@ -183,13 +205,11 @@ def cpu(address:bytearray) -> bool:
     elif opcode == bytearray(b'\x91'): #STA - Store A ([Indirect],Y)
         ii = bytearray(b'\x00')
         ii.extend(cpumap(addTo16BitInt(address, 1)))
-        i = addTo16BitInt(ii, cpu_y[0])
-        ii = addTo16BitInt(addTo16BitInt(address, 1), 1)[1:2]
-        ii.extend(bytearray(b'\x00'))
-        i = addTo16BitInt(i, cpumap(ii)[0]*256)
-        print(i)
-        writecpumap(i, cpu_a) ## COMPLETELY BROKEN, RETURN TO WHEN CAN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11
-        cpu_returnpc = addTo16BitInt(address, 3)
+        i = cpumap(addTo16BitInt(ii, 1))
+        i.extend(cpumap(ii))
+        i = addTo16BitInt(i, cpu_y[0])
+        writecpumap(i, cpu_a)
+        cpu_returnpc = addTo16BitInt(address, 2)
         cpu_cycles = 4
     elif opcode == bytearray(b'\x98'): #TYA - Transfer Y to A
         cpu_a = cpu_y
@@ -265,12 +285,27 @@ def cpu(address:bytearray) -> bool:
         cpu_cycles = 4
         if i[0:1] != addTo16BitInt(i, cpu_x[0])[0:1]: # Account for "oops" cycle
             cpu_cycles += 1
+    elif opcode == bytearray(b'\xC0'): #CPY - Compare Y (#Immediate)
+        if cpu_y[0] >= cpumap(addTo16BitInt(address, 1))[0]:
+            cpu_c = bytearray(b'\x01')
+        else:
+            cpu_c = bytearray(b'\x00')
+        if cpu_y[0] == cpumap(addTo16BitInt(address, 1))[0]:
+            cpu_z = bytearray(b'\x01')
+        else:
+            cpu_z = bytearray(b'\x00')
+        if cpu_y[0] - cpumap(addTo16BitInt(address, 1))[0] < 0:
+            cpu_n = bytearray(b'\x01')
+        else:
+            cpu_n = bytearray(b'\x00')
+        cpu_returnpc = addTo16BitInt(address, 2)
+        cpu_cycles = 2
     elif opcode == bytearray(b'\xC9'): #CMP - Compare A (#Immediate)
         if cpu_a[0] >= cpumap(addTo16BitInt(address, 1))[0]:
             cpu_c = bytearray(b'\x01')
         else:
             cpu_c = bytearray(b'\x00')
-        if cpu_a == cpumap(addTo16BitInt(address, 1)):
+        if cpu_a[0] == cpumap(addTo16BitInt(address, 1))[0]:
             cpu_z = bytearray(b'\x01')
         else:
             cpu_z = bytearray(b'\x00')
@@ -281,10 +316,11 @@ def cpu(address:bytearray) -> bool:
         cpu_returnpc = addTo16BitInt(address, 2)
         cpu_cycles = 2
     elif opcode == bytearray(b'\xCA'): #DEX - Decrement X
-        try:
-            cpu_x[0] -= 1
-        except ValueError: # Value goes below 00, catch and wrap to FF
-            cpu_x[0] = 255
+        x = cpu_x[0]
+        x -= 1
+        while x < 0:
+            x += 256
+        cpu_x[0] = x
         updateZeroFlag(cpu_x)
         updateNegativeFlag(cpu_x)
         cpu_returnpc = addTo16BitInt(address, 1)
@@ -332,7 +368,18 @@ charrom = rom[(16 + 16384*rom[4]):(17 + 16384*rom[4])+(8192*rom[5])] # [FirstByt
 
 ### BEGIN EMULATION ###
 noerrors = True
-while noerrors:
-    if cpu(cpu_pc) != True:
-        noerrors = False
-    cpu_pc = cpu_returnpc
+try:
+    while noerrors:
+        if cpu(cpu_pc) != True:
+            noerrors = False
+        cpu_pc = cpu_returnpc
+        if cpu_pc == bytearray(b'\x80\x57'):
+            print("Super Mario Bros - Startup Complete!")
+            exit()
+except KeyboardInterrupt:
+    print("Emulator Force Quit!")
+    print(f"PC = {cpu_pc}")
+    print(f"rPC = {cpu_returnpc}")
+    print(f"A = {cpu_a}")
+    print(f"X = {cpu_x}")
+    print(f"Y = {cpu_y}")

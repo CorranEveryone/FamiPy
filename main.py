@@ -269,8 +269,8 @@ def cpu(address:bytearray) -> bool:
         updateNegativeFlag(cpu_x)
         cpu_returnpc = addTo16BitInt(address, 1)
         cpu_cycles = 2
-    elif opcode == bytearray(b'\xD0'): #BPL - Branch if Plus
-        if cpu_z == bytearray(b'\x00'): #FIXFIX
+    elif opcode == bytearray(b'\xD0'): #BNE - Branch if Not Equal
+        if cpu_z == bytearray(b'\x00'):
             cpu_returnpc = addTo16BitInt(address, signedInt(addTo16BitInt(address, 1))+2)
         else:
             cpu_returnpc = addTo16BitInt(address, 2)
@@ -282,6 +282,21 @@ def cpu(address:bytearray) -> bool:
     elif opcode == bytearray(b'\xD8'): #CLD - Clear Decimal
         cpu_d = bytearray(b'\x00')
         cpu_returnpc = addTo16BitInt(address, 1)
+        cpu_cycles = 2
+    elif opcode == bytearray(b'\xE0'): #CPX - Compare X (#Immediate)
+        if cpu_x[0] >= cpumap(addTo16BitInt(address, 1))[0]:
+            cpu_c = bytearray(b'\x01')
+        else:
+            cpu_c = bytearray(b'\x00')
+        if cpu_x == cpumap(addTo16BitInt(address, 1)):
+            cpu_z = bytearray(b'\x01')
+        else:
+            cpu_z = bytearray(b'\x00')
+        if cpu_x[0] - cpumap(addTo16BitInt(address, 1))[0] < 0:
+            cpu_n = bytearray(b'\x01')
+        else:
+            cpu_n = bytearray(b'\x00')
+        cpu_returnpc = addTo16BitInt(address, 2)
         cpu_cycles = 2
     else:
         print(f"Unknown OPCODE: {opcode} at {address}")

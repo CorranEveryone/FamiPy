@@ -18,7 +18,7 @@ A Famicon/NES Emulator written in Python, made entirely by scratch (as little as
 - $B0 > +1, +2, +3, +4, +5, +6, +7, +8, +9, +B, +C, +E, +F
 - $C0 > +0, +1, +2, +3, +4, +5, +6, +7, +8, +B, +C, +D, +E, +F
 - $D0 > +1, +2, +3, +4, +5, +6, +7, +9, +A, +B, +C, +D, +E, +F
-- $E0 > +0, +1, +2, +3, +4, +5, +6, +7, +8, +9, +A, +B, +C, +D, +E, +F
+- $E0 > +1, +2, +3, +4, +5, +6, +7, +8, +9, +A, +B, +C, +D, +E, +F
 - $F0 > +0, +1, +2, +3, +4, +5, +6, +7, +8, +9, +A, +B, +C, +D, +E, +F
 ## TODOs
 - Implement PPU

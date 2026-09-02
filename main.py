@@ -145,19 +145,19 @@ def cpu(address:bytearray) -> bool:
     elif opcode == bytearray(b'\x84'): #STY - Store Y (Zero Page)
         i = bytearray(b'\x00')
         i.extend(cpumap(addTo16BitInt(address, 1)))
-        cpu_y = cpumap(i)
+        writecpumap(i, cpu_y)
         cpu_returnpc = addTo16BitInt(address, 2)
         cpu_cycles = 3
     elif opcode == bytearray(b'\x85'): #STA - Store A (Zero Page)
         i = bytearray(b'\x00')
         i.extend(cpumap(addTo16BitInt(address, 1)))
-        cpu_a = cpumap(i)
+        writecpumap(i, cpu_a)
         cpu_returnpc = addTo16BitInt(address, 2)
         cpu_cycles = 3
     elif opcode == bytearray(b'\x86'): #STX - Store X (Zero Page)
         i = bytearray(b'\x00')
         i.extend(cpumap(addTo16BitInt(address, 1)))
-        cpu_x = cpumap(i)
+        writecpumap(i, cpu_x)
         cpu_returnpc = addTo16BitInt(address, 2)
         cpu_cycles = 3
     elif opcode == bytearray(b'\x8A'): #TXA - Transfer X to A

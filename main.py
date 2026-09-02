@@ -87,6 +87,13 @@ def addTo16BitInt(givenint:bytearray, inttoadd:int) -> bytearray:
     while usableint1 > 255:
         usableint1 -= 256
         usableint0 += 1
+    while usableint1 < 0:
+        usableint1 += 256
+        usableint0 -= 1
+    while usableint0 > 255:
+        usableint0 -= 256
+    while usableint0 < 0:
+        usableint0 += 256
     return bytearray([usableint0, usableint1])
 
 def updateNegativeFlag(givenint:bytearray) -> None:
@@ -106,8 +113,7 @@ def updateZeroFlag(givenint:bytearray) -> None:
 def signedInt(givenint:bytearray) -> int:
     usableint = givenint[0]
     if usableint >= 128:
-        usableint -= 128
-        usableint *= -1
+        usableint -= 256
     return usableint
 
 def cpu(address:bytearray) -> bool:
@@ -116,13 +122,13 @@ def cpu(address:bytearray) -> bool:
     opcode = cpumap(address)
     if opcode == bytearray(b'\x10'): #BPL - Branch if Plus
         if cpu_n == bytearray(b'\x00'):
-            cpu_returnpc = addTo16BitInt(address, signedInt(addTo16BitInt(address, 1))+2)
+            cpu_returnpc = addTo16BitInt(address, signedInt(cpumap(addTo16BitInt(address, 1)))+2)
         else:
             cpu_returnpc = addTo16BitInt(address, 2)
         cpu_cycles = 2
         if cpu_n == bytearray(b'\x00'):
             cpu_cycles += 1
-        if address[0:1] != addTo16BitInt(address, signedInt(addTo16BitInt(address, 1))+2):
+        if address[0:1] != addTo16BitInt(address, signedInt(cpumap(addTo16BitInt(address, 1)))+2)[0:1]:
             cpu_cycles += 1
     elif opcode == bytearray(b'\x20'): #JSR - Jump to Subroutine
         cpu_returnpc = addTo16BitInt(address, 2)
@@ -222,13 +228,13 @@ def cpu(address:bytearray) -> bool:
         cpu_cycles = 4
     elif opcode == bytearray(b'\xB0'): #BCS - Branch if Carry Set
         if cpu_c == bytearray(b'\x01'):
-            cpu_returnpc = addTo16BitInt(address, signedInt(addTo16BitInt(address, 1))+2)
+            cpu_returnpc = addTo16BitInt(address, signedInt(cpumap(addTo16BitInt(address, 1)))+2)
         else:
             cpu_returnpc = addTo16BitInt(address, 2)
         cpu_cycles = 2
         if cpu_c == bytearray(b'\x01'):
             cpu_cycles += 1
-        if address[0:1] != addTo16BitInt(address, signedInt(addTo16BitInt(address, 1))+2):
+        if address[0:1] != addTo16BitInt(address, signedInt(cpumap(addTo16BitInt(address, 1)))+2)[0:1]:
             cpu_cycles += 1
     elif opcode == bytearray(b'\xBA'): #TSX - Transfer Stack Pointer to X
         cpu_x = cpu_s
@@ -271,13 +277,15 @@ def cpu(address:bytearray) -> bool:
         cpu_cycles = 2
     elif opcode == bytearray(b'\xD0'): #BNE - Branch if Not Equal
         if cpu_z == bytearray(b'\x00'):
-            cpu_returnpc = addTo16BitInt(address, signedInt(addTo16BitInt(address, 1))+2)
+            cpu_returnpc = addTo16BitInt(address, signedInt(cpumap(addTo16BitInt(address, 1)))+2)
+            print(cpu_returnpc)
+            print(signedInt(addTo16BitInt(address, 1))+2)
         else:
             cpu_returnpc = addTo16BitInt(address, 2)
         cpu_cycles = 2
         if cpu_z == bytearray(b'\x00'):
             cpu_cycles += 1
-        if address[0:1] != addTo16BitInt(address, signedInt(addTo16BitInt(address, 1))+2):
+        if address[0:1] != addTo16BitInt(address, signedInt(cpumap(addTo16BitInt(address, 1)))+2)[0:1]:
             cpu_cycles += 1
     elif opcode == bytearray(b'\xD8'): #CLD - Clear Decimal
         cpu_d = bytearray(b'\x00')

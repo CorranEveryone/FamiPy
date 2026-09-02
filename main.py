@@ -180,6 +180,17 @@ def cpu(address:bytearray) -> bool:
         writecpumap(i, cpu_a)
         cpu_returnpc = addTo16BitInt(address, 3)
         cpu_cycles = 4
+    elif opcode == bytearray(b'\x91'): #STA - Store A ([Indirect],Y)
+        ii = bytearray(b'\x00')
+        ii.extend(cpumap(addTo16BitInt(address, 1)))
+        i = addTo16BitInt(ii, cpu_y[0])
+        ii = addTo16BitInt(addTo16BitInt(address, 1), 1)[1:2]
+        ii.extend(bytearray(b'\x00'))
+        i = addTo16BitInt(i, cpumap(ii)[0]*256)
+        print(i)
+        writecpumap(i, cpu_a) ## COMPLETELY BROKEN, RETURN TO WHEN CAN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11
+        cpu_returnpc = addTo16BitInt(address, 3)
+        cpu_cycles = 4
     elif opcode == bytearray(b'\x98'): #TYA - Transfer Y to A
         cpu_a = cpu_y
         updateZeroFlag(cpu_a)

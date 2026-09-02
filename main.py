@@ -142,6 +142,24 @@ def cpu(address:bytearray) -> bool:
         cpu_i = bytearray(b'\x01') # PATCH_NEEDED Eventually delay by an instruction
         cpu_returnpc = addTo16BitInt(address, 1)
         cpu_cycles = 2
+    elif opcode == bytearray(b'\x84'): #STY - Store Y (Zero Page)
+        i = bytearray(b'\x00')
+        i.extend(cpumap(addTo16BitInt(address, 1)))
+        cpu_y = cpumap(i)
+        cpu_returnpc = addTo16BitInt(address, 2)
+        cpu_cycles = 3
+    elif opcode == bytearray(b'\x85'): #STA - Store A (Zero Page)
+        i = bytearray(b'\x00')
+        i.extend(cpumap(addTo16BitInt(address, 1)))
+        cpu_a = cpumap(i)
+        cpu_returnpc = addTo16BitInt(address, 2)
+        cpu_cycles = 3
+    elif opcode == bytearray(b'\x86'): #STX - Store X (Zero Page)
+        i = bytearray(b'\x00')
+        i.extend(cpumap(addTo16BitInt(address, 1)))
+        cpu_x = cpumap(i)
+        cpu_returnpc = addTo16BitInt(address, 2)
+        cpu_cycles = 3
     elif opcode == bytearray(b'\x8A'): #TXA - Transfer X to A
         cpu_a = cpu_x
         updateZeroFlag(cpu_a)

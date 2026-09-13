@@ -100,6 +100,15 @@ def add16bit(givenint:bytearray, inttoadd:int) -> bytearray:
         usableint0 += 256
     return bytearray([usableint0, usableint1])
 
+def add8bit(givenint:bytearray, inttoadd:int) -> bytearray:
+    usableint = givenint[0]
+    usableint += inttoadd
+    while usableint > 255:
+        usableint -= 256
+    while usableint < 0:
+        usableint += 256
+    return bytearray([usableint])
+
 def updateNegativeFlag(givenint:bytearray) -> None:
     global cpu_n
     if signedInt(givenint) < 0:
@@ -183,11 +192,7 @@ def cpu(address:bytearray) -> bool:
         cpu_returnpc = add16bit(address, 2)
         cpu_cycles = 3
     elif opcode == bytearray(b'\x88'): #DEY - Decrement Y
-        y = cpu_y[0]
-        y -= 1
-        while y < 0:
-            y += 256
-        cpu_y[0] = y
+        cpu_y = add8bit(cpu_y, -1)
         updateZeroFlag(cpu_y)
         updateNegativeFlag(cpu_y)
         cpu_returnpc = add16bit(address, 1)
@@ -324,11 +329,7 @@ def cpu(address:bytearray) -> bool:
         cpu_returnpc = add16bit(address, 2)
         cpu_cycles = 2
     elif opcode == bytearray(b'\xCA'): #DEX - Decrement X
-        x = cpu_x[0]
-        x -= 1
-        while x < 0:
-            x += 256
-        cpu_x[0] = x
+        cpu_x = add8bit(cpu_x, -1)
         updateZeroFlag(cpu_x)
         updateNegativeFlag(cpu_x)
         cpu_returnpc = add16bit(address, 1)

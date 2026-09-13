@@ -4,7 +4,9 @@
 # MISSING_APU_STUFF
 
 ##### USER CONFIG (temporary solution) #####
-romfilepath = "./roms/Super Mario Bros. (World).nes" # Only .nes files are supported
+#romfilepath = "./pathto/rom.nes" # Only .nes files are supported (Also NROM Games)
+#romfilepath = "./roms/Super Mario Bros. (World).nes"
+romfilepath = "./roms/Tetris (USA).nes"
 
 ##### DEFINE ALL VARIABLES HERE #####
 # Power Up State
@@ -13,8 +15,8 @@ ram = bytearray(b'\x00'*2048) # 2kb ram
 cpu_a = bytearray(b'\x00')
 cpu_x = bytearray(b'\x00')
 cpu_y = bytearray(b'\x00')
-cpu_pc = bytearray(b'\x80\x00')
-cpu_returnpc = bytearray(b'\x80\x00')
+cpu_pc = bytearray(b'\x00\x00') # To be initialized by ROM Load
+cpu_returnpc = bytearray(b'\x00\x00') # To be initialized by ROM Load
 cpu_s = bytearray(b'\xFD')
 cpu_c = bytearray(b'\x00')
 cpu_z = bytearray(b'\x00')
@@ -365,6 +367,11 @@ romfile = open(romfilepath, "rb")
 rom = bytearray(romfile.read())
 prgrom = rom[16:(16 + 16384*rom[4])] # [FirstByteOfProgramROM:LastByteOfProgramROM*BasedOnSpecifiedFromFile]
 charrom = rom[(16 + 16384*rom[4]):(17 + 16384*rom[4])+(8192*rom[5])] # [FirstByteOfCharROMAfterProgramROM:LastByteOfCharROM*BasedOnSpecifiedFromFile]
+
+i = cpumap(bytearray(b'\xFF\xFD'))
+i.extend(cpumap(bytearray(b'\xFF\xFC')))
+cpu_pc = i
+cpu_returnpc = cpu_pc
 
 ### BEGIN EMULATION ###
 noerrors = True

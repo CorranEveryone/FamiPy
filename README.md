@@ -2,7 +2,7 @@
 A Famicon/NES Emulator written in Python, made entirely by scratch (as little as possible based on other projects) mainly as a learning experience to get a better understanding of how the hardware works!
 ## Development Progress
 ### CPU Instructions
-![](https://geps.dev/progress/29?min=0&max=256)/256
+![](https://geps.dev/progress/30?min=0&max=256)/256
 #### Missing:
 - $00 > +0, +1, +2, +3, +4, +5, +6, +7, +8, +9, +A, +B, +C, +D, +E, +F
 - $10 > +1, +2, +3, +4, +5, +6, +7, +8, +9, +A, +B, +C, +D, +E, +F
@@ -18,7 +18,7 @@ A Famicon/NES Emulator written in Python, made entirely by scratch (as little as
 - $B0 > +1, +2, +3, +4, +5, +6, +7, +8, +9, +B, +C, +E, +F
 - $C0 > +0, +1, +2, +3, +4, +5, +6, +7, +8, +B, +C, +D, +E, +F
 - $D0 > +1, +2, +3, +4, +5, +6, +7, +9, +A, +B, +C, +D, +E, +F
-- $E0 > +1, +2, +3, +4, +5, +6, +7, +8, +9, +A, +B, +C, +D, +E, +F
+- $E0 > +1, +2, +3, +4, +5, +6, +7, +8, +9, +A, +B, +C, +D, +F
 - $F0 > +0, +1, +2, +3, +4, +5, +6, +7, +8, +9, +A, +B, +C, +D, +E, +F
 ## TODOs
 - Implement PPU

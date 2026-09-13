@@ -363,6 +363,12 @@ def cpu(address:bytearray) -> bool:
             cpu_n = bytearray(b'\x00')
         cpu_returnpc = add16bit(address, 2)
         cpu_cycles = 2
+    elif opcode == bytearray(b'\xEE'): #INC - Increment Memory (Absolute)
+        memory_address = cpumap(add16bit(address, 2))
+        memory_address.extend(cpumap(add16bit(address, 1)))
+        writecpumap(memory_address, add8bit(cpumap(memory_address), 1))
+        cpu_returnpc = add16bit(address, 3)
+        cpu_cycles = 6
     else:
         print(f"Unknown OPCODE: {opcode} at {address}")
         returncode = False

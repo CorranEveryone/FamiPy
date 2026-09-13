@@ -326,6 +326,12 @@ def cpu(address:bytearray) -> bool:
             cpu_n = bytearray(b'\x00')
         cpu_returnpc = add16bit(address, 2)
         cpu_cycles = 2
+    elif opcode == bytearray(b'\xC6'): #DEC - Decrement Memory (Zero Page)
+        memory_address = bytearray(b'\x00')
+        memory_address.extend(cpumap(add16bit(address, 1)))
+        writecpumap(memory_address, add8bit(cpumap(memory_address), -1))
+        cpu_returnpc = add16bit(address, 2)
+        cpu_cycles = 5
     elif opcode == bytearray(b'\xC9'): #CMP - Compare A (#Immediate)
         if cpu_a[0] >= cpumap(add16bit(address, 1))[0]:
             cpu_c = bytearray(b'\x01')

@@ -203,6 +203,12 @@ def cpu(address:bytearray) -> bool:
         i.extend(cpumap(addTo16BitInt(address, 1)))
         writecpumap(i, cpu_a)
         cpu_returnpc = addTo16BitInt(address, 3)
+        cpu_cycles = 4.
+    elif opcode == bytearray(b'\x8E'): #STX - Store X (Absolute)
+        i = cpumap(addTo16BitInt(address, 2))
+        i.extend(cpumap(addTo16BitInt(address, 1)))
+        writecpumap(i, cpu_x)
+        cpu_returnpc = addTo16BitInt(address, 3)
         cpu_cycles = 4
     elif opcode == bytearray(b'\x91'): #STA - Store A ([Indirect],Y)
         ii = bytearray(b'\x00')

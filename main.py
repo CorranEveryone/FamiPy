@@ -84,7 +84,7 @@ def writecpumap(address:bytearray, value:bytearray) -> bool:
         returncode = False
     return returncode
 
-def addTo16BitInt(givenint:bytearray, inttoadd:int) -> bytearray:
+def add16bit(givenint:bytearray, inttoadd:int) -> bytearray:
     usableint1 = givenint[1]
     usableint0 = givenint[0]
     usableint1 += inttoadd
@@ -126,16 +126,16 @@ def cpu(address:bytearray) -> bool:
     opcode = cpumap(address)
     if opcode == bytearray(b'\x10'): #BPL - Branch if Plus
         if cpu_n == bytearray(b'\x00'):
-            cpu_returnpc = addTo16BitInt(address, signedInt(cpumap(addTo16BitInt(address, 1)))+2)
+            cpu_returnpc = add16bit(address, signedInt(cpumap(add16bit(address, 1)))+2)
         else:
-            cpu_returnpc = addTo16BitInt(address, 2)
+            cpu_returnpc = add16bit(address, 2)
         cpu_cycles = 2
         if cpu_n == bytearray(b'\x00'):
             cpu_cycles += 1
-        if address[0:1] != addTo16BitInt(address, signedInt(cpumap(addTo16BitInt(address, 1)))+2)[0:1]:
+        if address[0:1] != add16bit(address, signedInt(cpumap(add16bit(address, 1)))+2)[0:1]:
             cpu_cycles += 1
     elif opcode == bytearray(b'\x20'): #JSR - Jump to Subroutine
-        cpu_returnpc = addTo16BitInt(address, 2)
+        cpu_returnpc = add16bit(address, 2)
         i = bytearray(b'\x01')
         i.extend(cpu_s)
         cpu_a = writecpumap(i, cpu_returnpc[1:2])
@@ -144,8 +144,8 @@ def cpu(address:bytearray) -> bool:
         i.extend(cpu_s)
         cpu_a = writecpumap(i, cpu_returnpc[0:1])
         cpu_s = bytearray([cpu_s[0]-1])
-        i = cpumap(addTo16BitInt(address, 2))
-        i.extend(cpumap(addTo16BitInt(address, 1)))
+        i = cpumap(add16bit(address, 2))
+        i.extend(cpumap(add16bit(address, 1)))
         cpu_returnpc = i
         cpu_cycles = 6
     elif opcode == bytearray(b'\x60'): #RTS - Return from Subroutine
@@ -157,30 +157,30 @@ def cpu(address:bytearray) -> bool:
         i = bytearray(b'\x01')
         i.extend(cpu_s)
         ii.extend(cpumap(i))
-        print(addTo16BitInt(ii, 1))
-        cpu_returnpc = addTo16BitInt(ii, 1)
+        print(add16bit(ii, 1))
+        cpu_returnpc = add16bit(ii, 1)
         cpu_cycles = 6
     elif opcode == bytearray(b'\x78'): #SEI - Set Interrupt Disable
         cpu_i = bytearray(b'\x01') # PATCH_NEEDED Eventually delay by an instruction
-        cpu_returnpc = addTo16BitInt(address, 1)
+        cpu_returnpc = add16bit(address, 1)
         cpu_cycles = 2
     elif opcode == bytearray(b'\x84'): #STY - Store Y (Zero Page)
         i = bytearray(b'\x00')
-        i.extend(cpumap(addTo16BitInt(address, 1)))
+        i.extend(cpumap(add16bit(address, 1)))
         writecpumap(i, cpu_y)
-        cpu_returnpc = addTo16BitInt(address, 2)
+        cpu_returnpc = add16bit(address, 2)
         cpu_cycles = 3
     elif opcode == bytearray(b'\x85'): #STA - Store A (Zero Page)
         i = bytearray(b'\x00')
-        i.extend(cpumap(addTo16BitInt(address, 1)))
+        i.extend(cpumap(add16bit(address, 1)))
         writecpumap(i, cpu_a)
-        cpu_returnpc = addTo16BitInt(address, 2)
+        cpu_returnpc = add16bit(address, 2)
         cpu_cycles = 3
     elif opcode == bytearray(b'\x86'): #STX - Store X (Zero Page)
         i = bytearray(b'\x00')
-        i.extend(cpumap(addTo16BitInt(address, 1)))
+        i.extend(cpumap(add16bit(address, 1)))
         writecpumap(i, cpu_x)
-        cpu_returnpc = addTo16BitInt(address, 2)
+        cpu_returnpc = add16bit(address, 2)
         cpu_cycles = 3
     elif opcode == bytearray(b'\x88'): #DEY - Decrement Y
         y = cpu_y[0]
@@ -190,138 +190,138 @@ def cpu(address:bytearray) -> bool:
         cpu_y[0] = y
         updateZeroFlag(cpu_y)
         updateNegativeFlag(cpu_y)
-        cpu_returnpc = addTo16BitInt(address, 1)
+        cpu_returnpc = add16bit(address, 1)
         cpu_cycles = 2
     elif opcode == bytearray(b'\x8A'): #TXA - Transfer X to A
         cpu_a = cpu_x
         updateZeroFlag(cpu_a)
         updateNegativeFlag(cpu_a)
-        cpu_returnpc = addTo16BitInt(address, 1)
+        cpu_returnpc = add16bit(address, 1)
         cpu_cycles = 2
     elif opcode == bytearray(b'\x8D'): #STA - Store A (Absolute)
-        i = cpumap(addTo16BitInt(address, 2))
-        i.extend(cpumap(addTo16BitInt(address, 1)))
+        i = cpumap(add16bit(address, 2))
+        i.extend(cpumap(add16bit(address, 1)))
         writecpumap(i, cpu_a)
-        cpu_returnpc = addTo16BitInt(address, 3)
+        cpu_returnpc = add16bit(address, 3)
         cpu_cycles = 4.
     elif opcode == bytearray(b'\x8E'): #STX - Store X (Absolute)
-        i = cpumap(addTo16BitInt(address, 2))
-        i.extend(cpumap(addTo16BitInt(address, 1)))
+        i = cpumap(add16bit(address, 2))
+        i.extend(cpumap(add16bit(address, 1)))
         writecpumap(i, cpu_x)
-        cpu_returnpc = addTo16BitInt(address, 3)
+        cpu_returnpc = add16bit(address, 3)
         cpu_cycles = 4
     elif opcode == bytearray(b'\x91'): #STA - Store A ([Indirect],Y)
         ii = bytearray(b'\x00')
-        ii.extend(cpumap(addTo16BitInt(address, 1)))
-        i = cpumap(addTo16BitInt(ii, 1))
+        ii.extend(cpumap(add16bit(address, 1)))
+        i = cpumap(add16bit(ii, 1))
         i.extend(cpumap(ii))
-        i = addTo16BitInt(i, cpu_y[0])
+        i = add16bit(i, cpu_y[0])
         writecpumap(i, cpu_a)
-        cpu_returnpc = addTo16BitInt(address, 2)
+        cpu_returnpc = add16bit(address, 2)
         cpu_cycles = 4
     elif opcode == bytearray(b'\x98'): #TYA - Transfer Y to A
         cpu_a = cpu_y
         updateZeroFlag(cpu_a)
         updateNegativeFlag(cpu_a)
-        cpu_returnpc = addTo16BitInt(address, 1)
+        cpu_returnpc = add16bit(address, 1)
         cpu_cycles = 2
     elif opcode == bytearray(b'\x9A'): #TXS - Transfer X to Stack Pointer
         cpu_s = cpu_x
-        cpu_returnpc = addTo16BitInt(address, 1)
+        cpu_returnpc = add16bit(address, 1)
         cpu_cycles = 2
     elif opcode == bytearray(b'\xA0'): #LDY - Load Y (#Immediate)
-        cpu_y = cpumap(addTo16BitInt(address, 1))
+        cpu_y = cpumap(add16bit(address, 1))
         updateZeroFlag(cpu_y)
         updateNegativeFlag(cpu_y)
-        cpu_returnpc = addTo16BitInt(address, 2)
+        cpu_returnpc = add16bit(address, 2)
         cpu_cycles = 2
     elif opcode == bytearray(b'\xA2'): #LDX - Load X (#Immediate)
-        cpu_x = cpumap(addTo16BitInt(address, 1))
+        cpu_x = cpumap(add16bit(address, 1))
         updateZeroFlag(cpu_x)
         updateNegativeFlag(cpu_x)
-        cpu_returnpc = addTo16BitInt(address, 2)
+        cpu_returnpc = add16bit(address, 2)
         cpu_cycles = 2
     elif opcode == bytearray(b'\xA8'): #TAY - Transfer A to Y
         cpu_y = cpu_a
         updateZeroFlag(cpu_y)
         updateNegativeFlag(cpu_y)
-        cpu_returnpc = addTo16BitInt(address, 1)
+        cpu_returnpc = add16bit(address, 1)
         cpu_cycles = 2
     elif opcode == bytearray(b'\xA9'): #LDA - Load A (#Immediate)
-        cpu_a = cpumap(addTo16BitInt(address, 1))
+        cpu_a = cpumap(add16bit(address, 1))
         updateZeroFlag(cpu_a)
         updateNegativeFlag(cpu_a)
-        cpu_returnpc = addTo16BitInt(address, 2)
+        cpu_returnpc = add16bit(address, 2)
         cpu_cycles = 2
     elif opcode == bytearray(b'\xAA'): #TAX - Transfer A to X
         cpu_x = cpu_a
         updateZeroFlag(cpu_x)
         updateNegativeFlag(cpu_x)
-        cpu_returnpc = addTo16BitInt(address, 1)
+        cpu_returnpc = add16bit(address, 1)
         cpu_cycles = 2
     elif opcode == bytearray(b'\xAD'): #LDA - Load A (Absolute)
-        i = cpumap(addTo16BitInt(address, 2))
-        i.extend(cpumap(addTo16BitInt(address, 1)))
+        i = cpumap(add16bit(address, 2))
+        i.extend(cpumap(add16bit(address, 1)))
         cpu_a = cpumap(i)
         updateZeroFlag(cpu_a)
         updateNegativeFlag(cpu_a)
-        cpu_returnpc = addTo16BitInt(address, 3)
+        cpu_returnpc = add16bit(address, 3)
         cpu_cycles = 4
     elif opcode == bytearray(b'\xB0'): #BCS - Branch if Carry Set
         if cpu_c == bytearray(b'\x01'):
-            cpu_returnpc = addTo16BitInt(address, signedInt(cpumap(addTo16BitInt(address, 1)))+2)
+            cpu_returnpc = add16bit(address, signedInt(cpumap(add16bit(address, 1)))+2)
         else:
-            cpu_returnpc = addTo16BitInt(address, 2)
+            cpu_returnpc = add16bit(address, 2)
         cpu_cycles = 2
         if cpu_c == bytearray(b'\x01'):
             cpu_cycles += 1
-        if address[0:1] != addTo16BitInt(address, signedInt(cpumap(addTo16BitInt(address, 1)))+2)[0:1]:
+        if address[0:1] != add16bit(address, signedInt(cpumap(add16bit(address, 1)))+2)[0:1]:
             cpu_cycles += 1
     elif opcode == bytearray(b'\xBA'): #TSX - Transfer Stack Pointer to X
         cpu_x = cpu_s
         updateZeroFlag(cpu_x)
         updateNegativeFlag(cpu_x)
-        cpu_returnpc = addTo16BitInt(address, 1)
+        cpu_returnpc = add16bit(address, 1)
         cpu_cycles = 2
     elif opcode == bytearray(b'\xBD'): #LDA - Load A (Absolute, X)
-        i = cpumap(addTo16BitInt(address, 2))
-        i.extend(cpumap(addTo16BitInt(address, 1)))
-        cpu_a = cpumap(addTo16BitInt(i, cpu_x[0]))
+        i = cpumap(add16bit(address, 2))
+        i.extend(cpumap(add16bit(address, 1)))
+        cpu_a = cpumap(add16bit(i, cpu_x[0]))
         updateZeroFlag(cpu_a)
         updateNegativeFlag(cpu_a)
-        cpu_returnpc = addTo16BitInt(address, 3)
+        cpu_returnpc = add16bit(address, 3)
         cpu_cycles = 4
-        if i[0:1] != addTo16BitInt(i, cpu_x[0])[0:1]: # Account for "oops" cycle
+        if i[0:1] != add16bit(i, cpu_x[0])[0:1]: # Account for "oops" cycle
             cpu_cycles += 1
     elif opcode == bytearray(b'\xC0'): #CPY - Compare Y (#Immediate)
-        if cpu_y[0] >= cpumap(addTo16BitInt(address, 1))[0]:
+        if cpu_y[0] >= cpumap(add16bit(address, 1))[0]:
             cpu_c = bytearray(b'\x01')
         else:
             cpu_c = bytearray(b'\x00')
-        if cpu_y[0] == cpumap(addTo16BitInt(address, 1))[0]:
+        if cpu_y[0] == cpumap(add16bit(address, 1))[0]:
             cpu_z = bytearray(b'\x01')
         else:
             cpu_z = bytearray(b'\x00')
-        if cpu_y[0] - cpumap(addTo16BitInt(address, 1))[0] < 0:
+        if cpu_y[0] - cpumap(add16bit(address, 1))[0] < 0:
             cpu_n = bytearray(b'\x01')
         else:
             cpu_n = bytearray(b'\x00')
-        cpu_returnpc = addTo16BitInt(address, 2)
+        cpu_returnpc = add16bit(address, 2)
         cpu_cycles = 2
     elif opcode == bytearray(b'\xC9'): #CMP - Compare A (#Immediate)
-        if cpu_a[0] >= cpumap(addTo16BitInt(address, 1))[0]:
+        if cpu_a[0] >= cpumap(add16bit(address, 1))[0]:
             cpu_c = bytearray(b'\x01')
         else:
             cpu_c = bytearray(b'\x00')
-        if cpu_a[0] == cpumap(addTo16BitInt(address, 1))[0]:
+        if cpu_a[0] == cpumap(add16bit(address, 1))[0]:
             cpu_z = bytearray(b'\x01')
         else:
             cpu_z = bytearray(b'\x00')
-        if cpu_a[0] - cpumap(addTo16BitInt(address, 1))[0] < 0:
+        if cpu_a[0] - cpumap(add16bit(address, 1))[0] < 0:
             cpu_n = bytearray(b'\x01')
         else:
             cpu_n = bytearray(b'\x00')
-        cpu_returnpc = addTo16BitInt(address, 2)
+        cpu_returnpc = add16bit(address, 2)
         cpu_cycles = 2
     elif opcode == bytearray(b'\xCA'): #DEX - Decrement X
         x = cpu_x[0]
@@ -331,36 +331,36 @@ def cpu(address:bytearray) -> bool:
         cpu_x[0] = x
         updateZeroFlag(cpu_x)
         updateNegativeFlag(cpu_x)
-        cpu_returnpc = addTo16BitInt(address, 1)
+        cpu_returnpc = add16bit(address, 1)
         cpu_cycles = 2
     elif opcode == bytearray(b'\xD0'): #BNE - Branch if Not Equal
         if cpu_z == bytearray(b'\x00'):
-            cpu_returnpc = addTo16BitInt(address, signedInt(cpumap(addTo16BitInt(address, 1)))+2)
+            cpu_returnpc = add16bit(address, signedInt(cpumap(add16bit(address, 1)))+2)
         else:
-            cpu_returnpc = addTo16BitInt(address, 2)
+            cpu_returnpc = add16bit(address, 2)
         cpu_cycles = 2
         if cpu_z == bytearray(b'\x00'):
             cpu_cycles += 1
-        if address[0:1] != addTo16BitInt(address, signedInt(cpumap(addTo16BitInt(address, 1)))+2)[0:1]:
+        if address[0:1] != add16bit(address, signedInt(cpumap(add16bit(address, 1)))+2)[0:1]:
             cpu_cycles += 1
     elif opcode == bytearray(b'\xD8'): #CLD - Clear Decimal
         cpu_d = bytearray(b'\x00')
-        cpu_returnpc = addTo16BitInt(address, 1)
+        cpu_returnpc = add16bit(address, 1)
         cpu_cycles = 2
     elif opcode == bytearray(b'\xE0'): #CPX - Compare X (#Immediate)
-        if cpu_x[0] >= cpumap(addTo16BitInt(address, 1))[0]:
+        if cpu_x[0] >= cpumap(add16bit(address, 1))[0]:
             cpu_c = bytearray(b'\x01')
         else:
             cpu_c = bytearray(b'\x00')
-        if cpu_x == cpumap(addTo16BitInt(address, 1)):
+        if cpu_x == cpumap(add16bit(address, 1)):
             cpu_z = bytearray(b'\x01')
         else:
             cpu_z = bytearray(b'\x00')
-        if cpu_x[0] - cpumap(addTo16BitInt(address, 1))[0] < 0:
+        if cpu_x[0] - cpumap(add16bit(address, 1))[0] < 0:
             cpu_n = bytearray(b'\x01')
         else:
             cpu_n = bytearray(b'\x00')
-        cpu_returnpc = addTo16BitInt(address, 2)
+        cpu_returnpc = add16bit(address, 2)
         cpu_cycles = 2
     else:
         print(f"Unknown OPCODE: {opcode} at {address}")

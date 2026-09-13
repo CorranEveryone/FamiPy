@@ -48,10 +48,9 @@ def cpumap(address:bytearray) -> bytearray: #address:16bit
         return ram[addressbyte[0]+(256*6):addressbyte[0]+(256*6)+1]
     elif addresspage == bytearray(b'\x07') or addresspage == bytearray(b'\x0F') or addresspage == bytearray(b'\x17') or addresspage == bytearray(b'\x1F'): # RAM Page 7
         return ram[addressbyte[0]+(256*7):addressbyte[0]+(256*7)+1]
-    # MISSING_PPU_STUFF
-    elif address == bytearray(b'\x20\x02'):# DEBUG CODE
-        return bytearray(b'\xFF')# DEBUG CODE
-    # MISSING_APU_STUFF
+    # MISSING_PPU_STUFF - PPU Registers ($2000-$2007)
+    # MISSING_PPU_STUFF - Mirrors of PPU Registers ($2008-$3FFF)
+    # MISSING_APU_STUFF - APU and I/O Registers
     elif addresspage[0] >= 128:
         return prgrom[addressbyte[0]+(addresspage[0]-128)*256:(addressbyte[0]+(addresspage[0]-128)*256)+1]
     else:
@@ -78,8 +77,9 @@ def writecpumap(address:bytearray, value:bytearray) -> bool:
         ram[addressbyte[0]+(256*6):addressbyte[0]+(256*6)+1] = value
     elif addresspage == bytearray(b'\x07') or addresspage == bytearray(b'\x0F') or addresspage == bytearray(b'\x17') or addresspage == bytearray(b'\x1F'): # RAM Page 7
         ram[addressbyte[0]+(256*7):addressbyte[0]+(256*7)+1] = value
-    # MISSING_PPU_STUFF
-    # MISSING_APU_STUFF
+    # MISSING_PPU_STUFF - PPU Registers ($2000-$2007)
+    # MISSING_PPU_STUFF - Mirrors of PPU Registers ($2008-$3FFF)
+    # MISSING_APU_STUFF - APU and I/O Registers
     else:
         print(f"[ERROR] {address} is not writable CPU Memory Address")
         returncode = False

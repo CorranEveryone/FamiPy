@@ -166,6 +166,11 @@ def cpu(address:bytearray) -> bool:
         updateZeroFlag(cpu_a)
         cpu_returnpc = add16bit(address, 1)
         cpu_cycles = 2
+    elif opcode == bytearray(b'\x4C'): #JMP - Jump (Absolute)
+        i = cpumap(add16bit(address, 2))
+        i.extend(cpumap(add16bit(address, 1)))
+        cpu_returnpc = i
+        cpu_cycles = 3
     elif opcode == bytearray(b'\x60'): #RTS - Return from Subroutine
         cpu_s = bytearray([cpu_s[0]+1])
         i = bytearray(b'\x01')
@@ -175,7 +180,6 @@ def cpu(address:bytearray) -> bool:
         i = bytearray(b'\x01')
         i.extend(cpu_s)
         ii.extend(cpumap(i))
-        print(add16bit(ii, 1))
         cpu_returnpc = add16bit(ii, 1)
         cpu_cycles = 6
     elif opcode == bytearray(b'\x78'): #SEI - Set Interrupt Disable

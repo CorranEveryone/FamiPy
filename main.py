@@ -1,3 +1,4 @@
+from math import floor
 ##### CHANGES REQUIRED #####
 # Comments with PATCH_NEEDED require changes that weren't initially made but were known
 # MISSING_PPU_STUFF
@@ -157,6 +158,14 @@ def cpu(address:bytearray) -> bool:
         i.extend(cpumap(add16bit(address, 1)))
         cpu_returnpc = i
         cpu_cycles = 6
+    elif opcode == bytearray(b'\x4A'): #LSR - Logical Shift Right (Accumulator)
+        #Carry Flag set to Bit0 before Shift
+        cpu_c = bytearray([cpu_a[0]%2])
+        cpu_a = bytearray([floor(cpu_a[0]/2)])
+        updateNegativeFlag(cpu_a)
+        updateZeroFlag(cpu_a)
+        cpu_returnpc = add16bit(address, 1)
+        cpu_cycles = 2
     elif opcode == bytearray(b'\x60'): #RTS - Return from Subroutine
         cpu_s = bytearray([cpu_s[0]+1])
         i = bytearray(b'\x01')
@@ -393,9 +402,6 @@ try:
         if cpu(cpu_pc) != True:
             noerrors = False
         cpu_pc = cpu_returnpc
-        if cpu_pc == bytearray(b'\x80\x57'):
-            print("Super Mario Bros - Startup Complete!")
-            exit()
 except KeyboardInterrupt:
     print("Emulator Force Quit!")
     print(f"PC = {cpu_pc}")
